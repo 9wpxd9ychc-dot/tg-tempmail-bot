@@ -1,1 +1,20 @@
+{
+  "name": "tg-tempmail-bot",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "npm@10.8.2",
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0",
+    "typescript": "^5.7.0",
+    "@cloudflare/workers-types": "^4.20241218.0"
+  },
+  "dependencies": {
+    "grammy": "^1.30.0"
+  }
+}
 
