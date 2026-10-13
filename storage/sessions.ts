@@ -1,13 +1,10 @@
-export interface Session {
-  address: string;
-  password: string;
-  token: string;
-}
+import type { Env } from "../index";
+import type { MailTmSession } from "../mail/types";
 
 export async function saveSession(
   env: Env,
   telegramId: number,
-  session: Session
+  session: MailTmSession
 ): Promise<void> {
   await env.MAIL_SESSIONS.put(`user:${telegramId}`, JSON.stringify(session));
 }
@@ -15,7 +12,7 @@ export async function saveSession(
 export async function getSession(
   env: Env,
   telegramId: number
-): Promise<Session | null> {
+): Promise<MailTmSession | null> {
   const raw = await env.MAIL_SESSIONS.get(`user:${telegramId}`);
   return raw ? JSON.parse(raw) : null;
 }
