@@ -1,16 +1,27 @@
-export interface MailTmMessage {
-  id: string;
-  from: { address: string; name?: string };
-  to: { address: string }[];
+export interface OneSecMailMessage {
+  id: number;
+  from: string;
   subject: string;
-  intro: string;
-  text?: string;
-  html?: string[];
-  createdAt: string;
+  date: string;
 }
 
-export interface MailTmSession {
+export interface OneSecMailFullMessage {
+  id: number;
+  from: string;
+  subject: string;
+  date: string;
+  body?: string;
+  textBody?: string;
+  htmlBody?: string;
+  attachments: {
+    filename: string;
+    contentType: string;
+    size: number;
+  }[];
+}
+
+export interface OneSecMailSession {
   address: string;
-  password: string;
-  token: string;
-} 
+  login: string;
+  domain: string;
+}
