@@ -1,27 +1,11 @@
-# Секреты (НИКОГДА не в GitHub)
 .dev.vars
 .dev.vars.*
 .env
 .env.*
-
-# Cloudflare
 .wrangler/
-wrangler.toml.bak
-
-# Node
 node_modules/
-npm-debug.log*
-yarn-error.log*
-
-# Сборка
 dist/
 build/
-
-# IDE
 .vscode/
 .idea/
-*.swp
-
-# OS
 .DS_Store
-Thumbs.db
