@@ -3,6 +3,7 @@ import { createBot } from "./bot";
 
 export interface Env {
   BOT_TOKEN: string;
+  MAILTM_BASE_URL: string;
   MAIL_SESSIONS: KVNamespace;
 }
 
@@ -18,7 +19,7 @@ export default {
       return await cb(request);
     } catch (e) {
       console.error("Webhook error:", e);
-      return new Response("OK", { status: 200 }); // Telegram не должен ретраить
+      return new Response("OK", { status: 200 });
     }
   },
 };
