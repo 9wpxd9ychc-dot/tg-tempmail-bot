@@ -1,58 +1,60 @@
-const BASE = "https://api.mail.tm";
+import type { Env } from "../index";
+import type { MailTmMessage } from "./types";
 
-// 1. Получить доступный домен
-export async function getDomain(): Promise<string> {
-  const res = await fetch(`${BASE}/domains`);
-  const data = await res.json();
+export async function getDomain(env: Env): Promise<string> {
+  const res = await fetch(`${env.MAILTM_BASE_URL}/domains`);
+  if (!res.ok) throw new Error(`Domains failed: ${res.status}`);
+  const data: any = await res.json();
   return data["hydra:member"][0].domain;
 }
 
-// 2. Создать аккаунт
 export async function createAccount(
+  env: Env,
   address: string,
   password: string
-): Promise<{ address: string; password: string; id: string }> {
-  const res = await fetch(`${BASE}/accounts`, {
+): Promise<{ id: string; address: string }> {
+  const res = await fetch(`${env.MAILTM_BASE_URL}/accounts`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ address, password }),
   });
   if (!res.ok) throw new Error(`Account create failed: ${res.status}`);
-  const data = await res.json();
-  return { id: data.id, address: data.address, password };
+  return res.json();
 }
 
-// 3. Получить токен
 export async function getToken(
+  env: Env,
   address: string,
   password: string
 ): Promise<string> {
-  const res = await fetch(`${BASE}/token`, {
+  const res = await fetch(`${env.MAILTM_BASE_URL}/token`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ address, password }),
   });
   if (!res.ok) throw new Error(`Token failed: ${res.status}`);
-  const data = await res.json();
+  const data: any = await res.json();
   return data.token;
 }
 
-// 4. Получить входящие
-export async function getMessages(token: string): Promise<MailTmMessage[]> {
-  const res = await fetch(`${BASE}/messages`, {
+export async function getMessages(
+  env: Env,
+  token: string
+): Promise<MailTmMessage[]> {
+  const res = await fetch(`${env.MAILTM_BASE_URL}/messages`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) throw new Error(`Messages failed: ${res.status}`);
-  const data = await res.json();
+  const data: any = await res.json();
   return data["hydra:member"] ?? [];
 }
 
-// 5. Получить полный текст письма
 export async function getMessage(
+  env: Env,
   token: string,
   messageId: string
 ): Promise<MailTmMessage> {
-  const res = await fetch(`${BASE}/messages/${messageId}`, {
+  const res = await fetch(`${env.MAILTM_BASE_URL}/messages/${messageId}`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) throw new Error(`Message failed: ${res.status}`);
