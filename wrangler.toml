@@ -7,4 +7,4 @@ MAILTM_BASE_URL = "https://api.mail.tm"
 
 [[kv_namespaces]]
 binding = "MAIL_SESSIONS"
-id = "Roum2012"
+id = "ffbd1f5a82c64b4b8602d990e38921cb"
