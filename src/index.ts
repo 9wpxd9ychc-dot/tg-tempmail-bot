@@ -3,7 +3,7 @@ import { createBot } from "./bot";
 
 export interface Env {
   BOT_TOKEN: string;
-  MAILTM_BASE_URL: string;
+  DROPMAIL_TOKEN: string;
   MAIL_SESSIONS: KVNamespace;
 }
 
