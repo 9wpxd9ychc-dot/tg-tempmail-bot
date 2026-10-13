@@ -1,18 +1,7 @@
 import type { Env } from "../index";
+import type { DropMailSession, DropMailMessage } from "./types";
 
 const BASE = "https://dropmail.me/api/graphql";
-
-// Тип сессии для DropMail (в нём есть restoreKey, чтобы не потерять ящик)
-export interface DropMailSession {
-  address: string;
-  restoreKey: string;
-  sessionId: string;
-}
-
-interface GraphQLResponse<T> {
-  data?: T;
-  errors?: { message: string }[];
-}
 
 async function graphql<T>(
   token: string,
@@ -27,14 +16,13 @@ async function graphql<T>(
 
   if (!res.ok) throw new Error(`DropMail HTTP: ${res.status}`);
 
-  const json: GraphQLResponse<T> = await res.json();
+  const json = await res.json();
   if (json.errors?.length) throw new Error(`DropMail GQL: ${json.errors[0].message}`);
   if (!json.data) throw new Error("DropMail: no data returned");
 
   return json.data;
 }
 
-// 1. Создать новую сессию и ящик
 export async function createEmail(env: Env): Promise<DropMailSession> {
   const data = await graphql<{
     introduceSession: {
@@ -60,8 +48,7 @@ export async function createEmail(env: Env): Promise<DropMailSession> {
   };
 }
 
-// 2. Получить список писем (у DropMail они возвращаются в объекте session)
-export async function getMessages(env: Env, sessionId: string) {
+export async function getMessages(env: Env, sessionId: string): Promise<DropMailMessage[]> {
   const data = await graphql<{
     session: {
       mails: {
