@@ -1,10 +1,10 @@
 import type { Env } from "../index";
-import type { OneSecMailSession } from "../mail/types";
+import type { DropMailSession } from "../mail/types";
 
 export async function saveSession(
   env: Env,
   telegramId: number,
-  session: OneSecMailSession
+  session: DropMailSession
 ): Promise<void> {
   await env.MAIL_SESSIONS.put(`user:${telegramId}`, JSON.stringify(session));
 }
@@ -12,7 +12,7 @@ export async function saveSession(
 export async function getSession(
   env: Env,
   telegramId: number
-): Promise<OneSecMailSession | null> {
+): Promise<DropMailSession | null> {
   const raw = await env.MAIL_SESSIONS.get(`user:${telegramId}`);
   return raw ? JSON.parse(raw) : null;
 }
