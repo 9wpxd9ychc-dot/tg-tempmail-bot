@@ -2,6 +2,9 @@ name = "tg-tempmail-bot"
 main = "src/index.ts"
 compatibility_date = "2026-01-01"
 
+[vars]
+MAILTM_BASE_URL = "https://api.mail.tm"
+
 [[kv_namespaces]]
 binding = "MAIL_SESSIONS"
-id = "<создашь через wrangler kv namespace create MAIL_SESSIONS>"
+id = "Roum2012"
