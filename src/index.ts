@@ -15,7 +15,7 @@ export default {
 
     try {
       const bot = createBot(env);
-      const cb = webhookCallback(bot, "cloudflare");
+      const cb = webhookCallback(bot, "cloudflare-mod");
       return await cb(request);
     } catch (e) {
       console.error("Webhook error:", e);
