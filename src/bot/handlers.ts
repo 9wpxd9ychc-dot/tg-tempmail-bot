@@ -1,16 +1,12 @@
 import { Bot } from "grammy";
-import {
-  generateEmail,
-  getMessages,
-  readMessage,
-} from "../mail/onesecmail";
+import { createEmail, getMessages } from "../mail/dropmail";
 import { saveSession, getSession, deleteSession } from "../storage/sessions";
 import type { Env } from "../index";
 
 export function registerHandlers(bot: Bot, env: Env) {
   bot.command("start", async (ctx) => {
     await ctx.reply(
-      "Привет! Я создаю временные почты (1secmail).\n\n" +
+      "Привет! Я создаю временные почты (DropMail).\n\n" +
         "/tempmail — создать новый ящик\n" +
         "/check — проверить входящие\n" +
         "/drop — удалить текущий ящик"
@@ -21,20 +17,17 @@ export function registerHandlers(bot: Bot, env: Env) {
     await ctx.reply("Создаю ящик...");
 
     try {
-      const { address, login, domain } = await generateEmail();
-
-      await saveSession(env, ctx.from!.id, { address, login, domain });
+      const session = await createEmail(env);
+      await saveSession(env, ctx.from!.id, session);
 
       await ctx.reply(
         `📧 Ящик создан:\n\n` +
-          `Адрес: ${address}\n\n` +
+          `Адрес: ${session.address}\n\n` +
           `Проверяй входящие командой /check\n` +
-          `⚠️ Письма живут ~1 час, потом удаляются автоматически.`
+          `⚠️ Ящик живёт ограниченное время.`
       );
     } catch (e) {
-      await ctx.reply(
-        `Ошибка: ${e instanceof Error ? e.message : "unknown"}`
-      );
+      await ctx.reply(`Ошибка: ${e instanceof Error ? e.message : "unknown"}`);
     }
   });
 
@@ -45,27 +38,21 @@ export function registerHandlers(bot: Bot, env: Env) {
     }
 
     try {
-      const messages = await getMessages(session.login, session.domain);
+      const messages = await getMessages(env, session.sessionId);
       if (messages.length === 0) {
         return ctx.reply("📭 Входящих нет.");
       }
 
       const lines = messages
         .slice(0, 5)
-        .map((m) => `• ${m.from}\n  ${m.subject}\n  ${m.date}`);
+        .map((m) => `• ${m.fromAddr}\n  ${m.headerSubject}\n  ${m.receivedAt}`);
 
-      await ctx.reply(
-        `📬 Входящие (${messages.length}):\n\n${lines.join("\n\n")}`
-      );
+      await ctx.reply(`📬 Входящие (${messages.length}):\n\n${lines.join("\n\n")}`);
 
-      // Последнее письмо целиком
-      const full = await readMessage(session.login, session.domain, messages[0].id);
-      const body = full.textBody || full.body || "(пусто)";
+      const body = messages[0].text || "(пусто)";
       await ctx.reply(`📄 Последнее письмо:\n\n${body.slice(0, 3000)}`);
     } catch (e) {
-      await ctx.reply(
-        `Ошибка: ${e instanceof Error ? e.message : "unknown"}`
-      );
+      await ctx.reply(`Ошибка: ${e instanceof Error ? e.message : "unknown"}`);
     }
   });
 
